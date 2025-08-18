@@ -6,6 +6,34 @@
     <title>Dia 3</title> 
   </head> 
   <body> 
-    <h1>Día 3 - DataWrapper</h1>
-  </body> 
+    <h1>Día 3 - DataWrapper</h1><br>
+<iframe
+  title="Acceso a Internet"
+  aria-label="Mapa coroplético"
+  id="datawrapper-chart-ifiPG"
+  src="https://datawrapper.dwcdn.net/ifiPG/1/"
+  scrolling="no"
+  frameborder="0"
+  style="width: 0; min-width: 100% !important; border: none;"
+  height="543"
+  data-external="1">
+</iframe>
+<script>
+  (function () {
+    'use strict';
+    window.addEventListener('message', function (event) {
+      if (event.data['datawrapper-height'] !== undefined) {
+        var iframes = document.querySelectorAll('iframe');
+        for (var key in event.data['datawrapper-height']) {
+          for (var i = 0, el; (el = iframes[i]); i++) {
+            if (el.contentWindow === event.source) {
+              el.style.height = event.data['datawrapper-height'][key] + 'px';
+            }
+          }
+        }
+      }
+    });
+  })();
+</script>
+</body> 
 </html>
