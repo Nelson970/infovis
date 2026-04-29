@@ -1,15 +1,368 @@
-<!DOCTYPE html> 
-<html> 
-  <head> 
-    <meta charset="utf-8"> 
-    <meta name="viewport" content="width=device-width"> 
-    <title>Dia 1</title> 
-  </head> 
-  <body style="margin:0;">
-      <div style="max-width:900px;margin:0 auto;text-align:center;padding:2rem;">
-        <h1 style="margin:0 0 1rem;">Día 1 - RawGraphs</h1>
-        <img src="rowgraphs1.png" alt="Distribución por Categoría"
-             style="max-width:100%;height:auto;">
-      </div>
-  </body> 
-</html>
+<!DOCTYPE html>
+                <html lang='es'>
+                <head>
+                <meta charset='utf-8'>
+                <meta http-equiv='refresh' content='60'>
+                <title>CTHA – Agendamiento</title>
+                <style>
+                  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+                  body {
+                    background: #1a1a2e;
+                    font-family: 'Segoe UI', sans-serif;
+                    padding: clamp(10px, 1.2vw, 24px);
+                  }
+
+                  .header {
+                    display: flex; justify-content: space-between; align-items: center;
+                    background: #12122a; border-radius: 12px;
+                    padding: clamp(12px, 1.5vw, 28px) clamp(16px, 2vw, 36px);
+                    margin-bottom: clamp(10px, 1.2vw, 20px);
+                    border: 1px solid rgba(255,255,255,0.1);
+                  }
+                  .header-title {
+                    font-size: clamp(22px, 2.8vw, 52px);
+                    font-weight: 600; color: #fff; letter-spacing: 1px;
+                  }
+                  .header-sub {
+                    font-size: clamp(16px, 1.8vw, 34px);
+                    color: #aaa;
+                  }
+                  .header-clock {
+                    font-size: clamp(28px, 3.5vw, 66px);
+                    font-weight: 500; color: #7eb8f7;
+                    font-variant-numeric: tabular-nums;
+                  }
+
+                  .stats {
+                    display: grid; grid-template-columns: repeat(5, 1fr);
+                    gap: clamp(8px, 1vw, 18px);
+                    margin-bottom: clamp(10px, 1.2vw, 20px);
+                  }
+                  .stat {
+                    background: #12122a; border-radius: 10px;
+                    padding: clamp(12px, 1.5vw, 28px) clamp(10px, 1vw, 20px);
+                    text-align: center; border: 1px solid rgba(255,255,255,0.08);
+                  }
+                  .stat-label {
+                    font-size: clamp(16px, 1.8vw, 34px);
+                     color: #fff; text-transform: uppercase;
+                    letter-spacing: .5px; margin-bottom: 6px;
+                  }
+                  .stat-value {
+                    font-size: clamp(36px, 5vw, 96px);
+                    font-weight: 600; line-height: 1;
+                  }
+
+                  .wrap {
+                    background: #12122a; border-radius: 12px;
+                    overflow: hidden; border: 1px solid rgba(255,255,255,0.08);
+                  }
+                  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+
+                  col.c-orden    { width: 9%; }
+                  col.c-mat      { width: 14%; }
+                  col.c-fem      { width: 10%; }
+                  col.c-fpp      { width: 10%; }
+                  col.c-enp      { width: 14%; }
+                  col.c-dias     { width: 5%; }
+                  col.c-hin      { width: 8%; }
+                  col.c-hout     { width: 8%; }
+                  col.c-est      { width: 16%; }
+
+                thead th {
+                    background: #0d0d22; color: #ffffff;
+                    font-size: clamp(16px, 1.8vw, 34px);
+                    font-weight: 500; text-transform: uppercase; letter-spacing: .5px;
+                    padding: clamp(10px, 1.2vw, 22px) clamp(10px, 1.2vw, 22px);
+                    text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);
+                }
+                tbody tr {
+                    border-bottom: 1px solid rgba(255,255,255,0.06);
+                  }
+                  tbody td {
+                    padding: clamp(12px, 1.8vw, 32px) clamp(10px, 1.2vw, 22px);
+                    font-size: clamp(15px, 1.5vw, 28px);
+                    color: #ddd; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+                  }
+                  td.mat {
+                    font-size: clamp(18px, 2vw, 38px);
+                    font-weight: 700; letter-spacing: .5px;
+                  }
+                  td.hin {
+                    font-size: clamp(18px, 2vw, 36px);
+                    font-weight: 600; color: #7eb8f7;
+                  }
+
+                  .badge {
+                    display: inline-block;
+                    padding: clamp(4px, .5vw, 10px) clamp(10px, 1.2vw, 22px);
+                    border-radius: 30px;
+                    font-size: clamp(11px, 1.1vw, 20px);
+                    font-weight: 600;
+                  }
+                  .footer {
+                    margin-top: 10px; text-align: right;
+                    font-size: clamp(10px, .9vw, 16px); color: #444;
+                  }
+                </style>
+                </head>
+                <body>
+                <script>
+                  function tickClock() {
+                    var el = document.getElementById('clock');
+                    if (!el) return;
+                    var n = new Date();
+                    var h = String(n.getHours()).padStart(2,'0');
+                    var m = String(n.getMinutes()).padStart(2,'0');
+                    var s = String(n.getSeconds()).padStart(2,'0');
+                    el.textContent = h + ':' + m + ':' + s;
+                  }
+                  setInterval(tickClock, 1000);
+                  window.onload = tickClock;
+                </script>
+                
+                <div class='header'>
+                  <div class='header-title'>CTHA &ndash; Agendamiento del día</div>
+                  <div class='header-sub'>29/04/2026</div>
+                  <div class='header-clock' id='clock'>13:50:26</div>
+                </div>
+                
+                <div class='stats'>
+                  <div class='stat'>
+                    <div class='stat-label'>Total órdenes</div>
+                    <div class='stat-value' style='color:#7eb8f7'>16</div>
+                  </div>
+                  <div class='stat'>
+                    <div class='stat-label'>En pista</div>
+                    <div class='stat-value' style='color:#80ff80'>9</div>
+                  </div>
+                  <div class='stat'>
+                    <div class='stat-label'>Programados</div>
+                    <div class='stat-value' style='color:#ffb6c1'>5</div>
+                  </div>
+                  <div class='stat'>
+                    <div class='stat-label'>No se presentó</div>
+                    <div class='stat-value' style='color:#ff7070'>2</div>
+                  </div>
+                  <div class='stat'>
+                    <div class='stat-label'>Reservas</div>
+                    <div class='stat-value' style='color:#bbbbff'>0</div>
+                  </div>
+                </div>
+                
+                <div class='wrap'>
+                <table>
+                <colgroup>
+                  <col class='c-orden'><col class='c-mat'><col class='c-fem'>
+                  <col class='c-fpp'><col class='c-enp'><col class='c-dias'>
+                  <col class='c-hin'><col class='c-hout'><col class='c-est'>
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>#Orden</th><th>Matrícula</th><th>Fch. Emisión</th>
+                    <th>Fch. P. Pista</th><th>En Pista</th><th>Días</th>
+                    <th>Hora IN</th><th>Hora OUT</th><th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                
+                    <tr style='border-left: 4px solid #FFFFFF; background: #FFFFFF18;'>
+                      <td style='color:#888'>58680</td>
+                      <td class='mat' style='color:#80ff80'>RAE 2305 </td>
+                      <td style='color:#888'>29/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>29/04/2026 08:53</td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>08:30</td>
+                      <td class='hin' style='font-weight:500; color:#ff9f40'>10:30</td>
+                      <td><span class='badge' style='background:#1a4d2e; color:#80ff80'>En pista</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FFFFFF; background: #FFFFFF18;'>
+                      <td style='color:#888'>58592</td>
+                      <td class='mat' style='color:#80ff80'>FRD 9746 </td>
+                      <td style='color:#888'>29/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>29/04/2026 08:49</td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>08:45</td>
+                      <td class='hin' style='font-weight:500; color:#ff9f40'>10:45</td>
+                      <td><span class='badge' style='background:#1a4d2e; color:#80ff80'>En pista</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FFFFFF; background: #FFFFFF18;'>
+                      <td style='color:#888'>58650</td>
+                      <td class='mat' style='color:#80ff80'>FRG 8551 </td>
+                      <td style='color:#888'>29/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>29/04/2026 08:55</td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>09:00</td>
+                      <td class='hin' style='font-weight:500; color:#ff9f40'>11:00</td>
+                      <td><span class='badge' style='background:#1a4d2e; color:#80ff80'>En pista</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FFFFFF; background: #FFFFFF18;'>
+                      <td style='color:#888'>58655</td>
+                      <td class='mat' style='color:#80ff80'>FRG 2200 </td>
+                      <td style='color:#888'>29/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>29/04/2026 09:09</td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>09:15</td>
+                      <td class='hin' style='font-weight:500; color:#ff9f40'>11:15</td>
+                      <td><span class='badge' style='background:#1a4d2e; color:#80ff80'>En pista</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FFFFFF; background: #FFFFFF18;'>
+                      <td style='color:#888'>58700</td>
+                      <td class='mat' style='color:#80ff80'>FRF 8993 </td>
+                      <td style='color:#888'>29/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>29/04/2026 08:29</td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>09:30</td>
+                      <td class='hin' style='font-weight:500; color:#ff9f40'>10:30</td>
+                      <td><span class='badge' style='background:#1a4d2e; color:#80ff80'>En pista</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FF4848; background: #FF484818;'>
+                      <td style='color:#888'>58545</td>
+                      <td class='mat' style='color:#ff7070'>ZZZ 1 </td>
+                      <td style='color:#888'>18/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>                  </td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>09:45</td>
+                      <td class='hin' style='font-weight:500; color:#8888aa'>12:45</td>
+                      <td><span class='badge' style='background:#4d1212; color:#ff7070'>No se presentó</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FFFFFF; background: #FFFFFF18;'>
+                      <td style='color:#888'>58705</td>
+                      <td class='mat' style='color:#80ff80'>FRG 5279 </td>
+                      <td style='color:#888'>29/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>29/04/2026 10:03</td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>10:00</td>
+                      <td class='hin' style='font-weight:500; color:#ff9f40'>13:00</td>
+                      <td><span class='badge' style='background:#1a4d2e; color:#80ff80'>En pista</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FFFFFF; background: #FFFFFF18;'>
+                      <td style='color:#888'>58706</td>
+                      <td class='mat' style='color:#80ff80'>FRF 2439 </td>
+                      <td style='color:#888'>29/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>29/04/2026 10:04</td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>10:15</td>
+                      <td class='hin' style='font-weight:500; color:#ff9f40'>13:15</td>
+                      <td><span class='badge' style='background:#1a4d2e; color:#80ff80'>En pista</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FFFFFF; background: #FFFFFF18;'>
+                      <td style='color:#888'>58703</td>
+                      <td class='mat' style='color:#80ff80'>FRG 5743 </td>
+                      <td style='color:#888'>29/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>29/04/2026 10:21</td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>10:30</td>
+                      <td class='hin' style='font-weight:500; color:#ff9f40'>13:30</td>
+                      <td><span class='badge' style='background:#1a4d2e; color:#80ff80'>En pista</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FF4848; background: #FF484818;'>
+                      <td style='color:#888'>58709</td>
+                      <td class='mat' style='color:#ff7070'>ZZZ 1 </td>
+                      <td style='color:#888'>29/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>                  </td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>10:45</td>
+                      <td class='hin' style='font-weight:500; color:#8888aa'>13:45</td>
+                      <td><span class='badge' style='background:#4d1212; color:#ff7070'>No se presentó</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FFB6C1; background: #FFB6C118;'>
+                      <td style='color:#888'>58678</td>
+                      <td class='mat' style='color:#ffb6c1'>FRG 7647 </td>
+                      <td style='color:#888'>28/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>                  </td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>14:00</td>
+                      <td class='hin' style='font-weight:500; color:#8888aa'>16:00</td>
+                      <td><span class='badge' style='background:#4d2030; color:#ffb6c1'>Pendiente hoy</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FFB6C1; background: #FFB6C118;'>
+                      <td style='color:#888'>58666</td>
+                      <td class='mat' style='color:#ffb6c1'>FRG 6707 </td>
+                      <td style='color:#888'>27/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>                  </td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>14:15</td>
+                      <td class='hin' style='font-weight:500; color:#8888aa'>16:15</td>
+                      <td><span class='badge' style='background:#4d2030; color:#ffb6c1'>Pendiente hoy</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FFB6C1; background: #FFB6C118;'>
+                      <td style='color:#888'>58697</td>
+                      <td class='mat' style='color:#ffb6c1'>SDJ 1320 </td>
+                      <td style='color:#888'>28/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>                  </td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>14:30</td>
+                      <td class='hin' style='font-weight:500; color:#8888aa'>17:30</td>
+                      <td><span class='badge' style='background:#4d2030; color:#ffb6c1'>Pendiente hoy</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FFFFFF; background: #FFFFFF18;'>
+                      <td style='color:#888'>58707</td>
+                      <td class='mat' style='color:#80ff80'>FRG 7676 </td>
+                      <td style='color:#888'>29/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>29/04/2026 10:40</td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>14:45</td>
+                      <td class='hin' style='font-weight:500; color:#ff9f40'>16:45</td>
+                      <td><span class='badge' style='background:#1a4d2e; color:#80ff80'>En pista</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FFB6C1; background: #FFB6C118;'>
+                      <td style='color:#888'>58665</td>
+                      <td class='mat' style='color:#ffb6c1'>SFI 1125 </td>
+                      <td style='color:#888'>27/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>                  </td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>15:00</td>
+                      <td class='hin' style='font-weight:500; color:#8888aa'>18:00</td>
+                      <td><span class='badge' style='background:#4d2030; color:#ffb6c1'>Pendiente hoy</span></td>
+                    </tr>
+                    
+                    <tr style='border-left: 4px solid #FFB6C1; background: #FFB6C118;'>
+                      <td style='color:#888'>58696</td>
+                      <td class='mat' style='color:#ffb6c1'>FRF 9957 </td>
+                      <td style='color:#888'>28/04/2026</td>
+                      <td style='color:#bbb'>29/04/2026</td>
+                      <td style='color:#999'>                  </td>
+                      <td style='color:#666; text-align:center'>0</td>
+                      <td class='hin'>15:15</td>
+                      <td class='hin' style='font-weight:500; color:#8888aa'>16:34</td>
+                      <td><span class='badge' style='background:#4d2030; color:#ffb6c1'>Pendiente hoy</span></td>
+                    </tr>
+                    
+                    </tbody>
+                    </table>
+                    </div>
+                    <div class='footer'>CTHA &mdash; generado 13:50:26 &mdash; próxima actualización en 60s</div>
+                    </body>
+                    </html>
+                    
